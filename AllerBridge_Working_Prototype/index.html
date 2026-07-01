@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AllerBridge — Travel hungry, not worried.</title>
+  <meta name="description" content="AllerBridge: a safety-first travel food-allergy communication app. Translate allergy needs, spot obvious menu concerns, and ask the right questions abroad." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+/* ============================================================
+   AllerBridge — styles.css
+   Premium travel-tech look: navy, teal, mint, soft blue, white
+   ============================================================ */
+:root {
+  --navy: #0b2340;
+  --navy-2: #12365c;
+  --teal: #0e7490;
+  --teal-2: #0891b2;
+  --mint: #2dd4bf;
+  --mint-soft: #d4f5ee;
+  --soft-blue: #eaf3fb;
+  --ink: #0f2135;
+  --muted: #5b7186;
+  --line: #e3ebf3;
+  --white: #ffffff;
+  --bg: #f4f8fb;
+
+  --red: #dc2f4c;
+  --red-soft: #fdecef;
+  --yellow: #d98a00;
+  --yellow-soft: #fdf4e3;
+  --blue: #2563b8;
+  --blue-soft: #eaf1fb;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 10px 30px rgba(11, 35, 64, 0.08);
+  --shadow-lg: 0 24px 60px rgba(11, 35, 64, 0.16);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --body: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--body);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 85% -10%, #e6f7f2 0%, transparent 55%),
+    radial-gradient(900px 500px at -10% 10%, #e9f2fb 0%, transparent 50%),
+    var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------- App shell ---------------- */
+.app-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: 84px;
+  position: relative;
+}
+
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px;
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
+.brand-mark { display: grid; place-items: center; }
+.brand-text { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -0.02em; color: var(--navy); }
+.brand-text span { color: var(--teal); }
+.topbar-status { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.status-chip {
+  font-size: 12px; font-weight: 600; color: var(--navy-2);
+  background: var(--white); border: 1px solid var(--line);
+  padding: 6px 11px; border-radius: 999px; white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+/* ---------------- Screens ---------------- */
+.screens { padding: 20px; }
+.screen { display: none; animation: fade .4s var(--ease); }
+.screen.is-active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.screen-head { margin-bottom: 18px; }
+.screen-head h2 { font-family: var(--sans); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+.screen-head p { color: var(--muted); margin-top: 6px; max-width: 640px; font-size: 15px; }
+.hero-badge {
+  font-size: 12px; font-weight: 700; color: var(--teal);
+  background: var(--mint-soft); padding: 4px 10px; border-radius: 999px;
+  vertical-align: middle; margin-left: 6px;
+}
+.section-h { font-family: var(--sans); font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 14px; }
+
+/* ---------------- Buttons ---------------- */
+.btn {
+  font-family: var(--sans); font-weight: 700; font-size: 15px;
+  border: none; border-radius: 999px; padding: 13px 22px; cursor: pointer;
+  transition: transform .15s var(--ease), box-shadow .2s var(--ease), background .2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary { background: linear-gradient(135deg, var(--teal-2), var(--teal)); color: #fff; box-shadow: 0 8px 22px rgba(8,145,178,.32); }
+.btn-primary:hover { box-shadow: 0 12px 28px rgba(8,145,178,.42); }
+.btn-ghost { background: var(--white); color: var(--navy); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.btn-ghost:hover { border-color: var(--mint); color: var(--teal); }
+.btn-block { width: 100%; }
+.screen-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+.screen-actions .btn { flex: 1; min-width: 140px; }
+
+/* ---------------- Cards ---------------- */
+.card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.card-h { font-family: var(--sans); font-weight: 700; font-size: 17px; color: var(--navy); }
+.card-sub { color: var(--muted); font-size: 13px; margin: 4px 0 14px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.select {
+  width: 100%; padding: 13px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--line); background: var(--soft-blue); color: var(--ink);
+  font-family: var(--body); font-size: 15px; font-weight: 500; cursor: pointer;
+}
+.select:focus { outline: 2px solid var(--mint); border-color: var(--mint); }
+
+/* ---------------- Disclaimer ---------------- */
+.disclaimer {
+  background: linear-gradient(135deg, #fff, var(--soft-blue));
+  border: 1px solid #cfe0f0; border-left: 4px solid var(--teal);
+  border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13.5px;
+  color: var(--navy-2); margin: 18px 0; line-height: 1.5;
+}
+.disclaimer.compact { margin: 12px 0; font-size: 12.5px; }
+
+/* ---------------- HOME ---------------- */
+.home-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; padding: 12px 0 8px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--teal); }
+.home-title { font-family: var(--sans); font-size: 46px; line-height: 1.04; font-weight: 800; letter-spacing: -0.03em; color: var(--navy); margin: 10px 0 14px; }
+.home-title .accent { color: var(--teal); }
+.home-sub { color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 460px; }
+.home-cta { display: flex; gap: 12px; margin: 22px 0; flex-wrap: wrap; }
+.home-trust { display: flex; gap: 26px; margin-top: 8px; }
+.home-trust div { display: flex; flex-direction: column; }
+.home-trust strong { font-family: var(--sans); font-size: 24px; color: var(--navy); font-weight: 800; }
+.home-trust span { font-size: 12px; color: var(--muted); }
+
+/* Phone mockup */
+.phone-mock {
+  justify-self: center; width: 264px; height: 540px; border-radius: 40px;
+  background: linear-gradient(160deg, var(--navy), var(--navy-2));
+  padding: 14px; box-shadow: var(--shadow-lg); position: relative;
+}
+.phone-notch { position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 92px; height: 22px; background: #05121f; border-radius: 0 0 14px 14px; z-index: 2; }
+.phone-screen { height: 100%; border-radius: 28px; background: linear-gradient(180deg, #f4f9ff, #e9f4ff); padding: 34px 16px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.mock-card { border-radius: 16px; padding: 14px; }
+.mock-alert { background: linear-gradient(135deg, #fff, #fef1f2); border: 1px solid #f6c9d1; box-shadow: 0 8px 18px rgba(220,47,76,.12); }
+.mock-badge { font-family: var(--sans); font-weight: 800; font-size: 13px; color: var(--red); }
+.mock-lang { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.mock-tags { display: flex; gap: 6px; margin: 8px 0; }
+.mock-tags span { font-size: 11px; font-weight: 700; background: var(--navy); color: #fff; padding: 4px 9px; border-radius: 999px; }
+.mock-note { font-size: 11px; color: var(--navy-2); line-height: 1.4; }
+.mock-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; padding: 10px 12px; border-radius: 12px; color: var(--navy-2); }
+.mock-row .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.mock-yellow { background: var(--yellow-soft); } .mock-yellow .dot { background: var(--yellow); }
+.mock-blue { background: var(--blue-soft); } .mock-blue .dot { background: var(--blue); }
+.mock-chip { margin-top: auto; text-align: center; font-size: 11px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--teal-2), var(--teal)); padding: 9px; border-radius: 12px; }
+
+.home-steps { margin-top: 30px; }
+.steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.step-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: transform .2s var(--ease); cursor: pointer; }
+.step-card:hover { transform: translateY(-4px); border-color: var(--mint); }
+.step-ico { font-size: 26px; }
+.step-num { font-size: 11px; font-weight: 800; color: var(--teal); letter-spacing: .05em; }
+.step-card h4 { font-family: var(--sans); font-size: 15px; color: var(--navy); margin: 6px 0 4px; }
+.step-card p { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+
+/* ---------------- Allergen grid ---------------- */
+.allergen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.allergen {
+  display: flex; align-items: center; gap: 10px; padding: 14px; cursor: pointer;
+  border: 2px solid var(--line); border-radius: var(--radius-sm); background: var(--white);
+  transition: all .18s var(--ease); font-weight: 600; color: var(--navy-2);
+}
+.allergen:hover { border-color: var(--mint); }
+.allergen .a-ico { font-size: 22px; }
+.allergen.selected { border-color: var(--teal); background: var(--mint-soft); color: var(--teal); box-shadow: 0 6px 16px rgba(14,116,144,.16); }
+.allergen .check { margin-left: auto; opacity: 0; font-weight: 800; color: var(--teal); transition: opacity .15s; }
+.allergen.selected .check { opacity: 1; }
+
+/* Type-to-search allergen finder */
+.allergen-search { position: relative; margin-top: 16px; }
+.allergen-search input { width: 100%; padding: 14px 15px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--soft-blue); font-family: var(--body); font-size: 15px; color: var(--ink); }
+.allergen-search input:focus { outline: 2px solid var(--mint); border-color: var(--mint); }
+.suggest { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 30; max-height: 280px; overflow-y: auto; padding: 6px; }
+.suggest[hidden] { display: none; }
+.suggest-item { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--navy-2); font-size: 14px; }
+.suggest-item:hover, .suggest-item.active { background: var(--mint-soft); color: var(--teal); }
+.suggest-item .s-ico { font-size: 18px; }
+.suggest-item .s-cat { margin-left: auto; font-size: 10.5px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.suggest-empty { padding: 14px; color: var(--muted); font-size: 13px; text-align: center; }
+.custom-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.custom-tag { display: inline-flex; align-items: center; gap: 7px; background: var(--mint-soft); color: var(--teal); border: 1px solid #b8ebe1; border-radius: 999px; padding: 7px 8px 7px 13px; font-weight: 700; font-size: 13px; }
+.custom-tag button { border: none; background: rgba(14,116,144,.12); color: var(--teal); cursor: pointer; font-size: 12px; line-height: 1; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; }
+.custom-tag button:hover { background: var(--red); color: #fff; }
+
+.profile-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 4px; }
+.summary-tile { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; border-radius: var(--radius); padding: 16px; }
+.summary-tile span { font-size: 12px; opacity: .75; }
+.summary-tile strong { display: block; font-family: var(--sans); font-size: 16px; margin-top: 4px; }
+
+/* ---------------- Destinations ---------------- */
+.dest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.dest {
+  background: var(--white); border: 2px solid var(--line); border-radius: var(--radius);
+  padding: 18px 14px; text-align: center; cursor: pointer; transition: all .18s var(--ease);
+}
+.dest:hover { transform: translateY(-3px); border-color: var(--mint); }
+.dest.selected { border-color: var(--teal); background: var(--mint-soft); }
+.dest .flag { font-size: 34px; }
+.dest .d-name { font-family: var(--sans); font-weight: 700; color: var(--navy); margin-top: 6px; font-size: 15px; }
+.dest .d-city { font-size: 12px; color: var(--muted); }
+
+.dest-detail { margin-top: 18px; }
+.detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 4px; }
+.detail-tile { background: var(--soft-blue); border-radius: var(--radius-sm); padding: 14px; }
+.detail-tile span { font-size: 12px; color: var(--muted); }
+.detail-tile strong { display: block; font-family: var(--sans); font-size: 16px; color: var(--navy); margin-top: 3px; }
+
+/* ---------------- Chef card ---------------- */
+.lang-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.lang-btn { font-family: var(--sans); font-weight: 600; font-size: 13px; padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--navy-2); cursor: pointer; transition: all .15s; }
+.lang-btn:hover { border-color: var(--mint); }
+.lang-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+.chefcard {
+  background: var(--white); border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--line);
+}
+.cc-head { background: linear-gradient(135deg, var(--red), #b91c3c); color: #fff; padding: 20px 22px; display: flex; align-items: center; gap: 14px; }
+.cc-head .cc-ico { font-size: 40px; }
+.cc-head h3 { font-family: var(--sans); font-size: 22px; font-weight: 800; }
+.cc-head p { font-size: 13px; opacity: .9; margin-top: 2px; }
+.cc-body { padding: 22px; }
+.cc-msg { font-size: 18px; line-height: 1.5; color: var(--ink); font-weight: 500; }
+.cc-sub-en { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 8px; line-height: 1.4; }
+.cc-section-label { font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--teal); margin: 20px 0 10px; }
+.cc-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.cc-tag { background: var(--navy); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 14px; padding: 8px 14px; border-radius: 999px; display: flex; align-items: center; gap: 6px; }
+.cc-cross { background: var(--yellow-soft); border: 1px solid #f0d79a; border-radius: var(--radius-sm); padding: 14px; margin-top: 16px; font-size: 14px; color: #7a4e00; line-height: 1.45; }
+.cc-emergency { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding: 14px 16px; background: var(--navy); border-radius: var(--radius-sm); color: #fff; }
+.cc-emergency span { font-size: 12px; opacity: .8; }
+.cc-emergency strong { font-family: var(--sans); font-size: 22px; }
+.cc-empty { padding: 40px 22px; text-align: center; color: var(--muted); }
+
+/* Full-screen overlay */
+.fullcard-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(6,18,31,.92); display: grid; place-items: center; padding: 20px; animation: fade .3s var(--ease); }
+.fullcard-overlay[hidden] { display: none; }
+.fullcard { width: 100%; max-width: 480px; background: #fff; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-lg); }
+.fullcard .cc-head { padding: 28px; }
+.fullcard .cc-head .cc-ico { font-size: 52px; }
+.fullcard .cc-head h3 { font-size: 28px; }
+.fullcard .cc-msg { font-size: 22px; }
+.fullcard-close { position: fixed; top: 22px; right: 22px; background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 11px 18px; font-family: var(--sans); font-weight: 700; cursor: pointer; font-size: 14px; }
+.fullcard-close:hover { background: rgba(255,255,255,.24); }
+
+/* ---------------- Menu helper / scanner ---------------- */
+.scanner { padding: 16px; }
+.scanner-window { position: relative; border-radius: var(--radius-sm); overflow: hidden; background: linear-gradient(180deg, #0b2340, #12365c); min-height: 300px; padding: 20px; }
+.scanner-window img { width: 100%; border-radius: 12px; display: block; }
+.scanner-menu { color: #dfeaf5; }
+.scanner-menu h4 { font-family: var(--sans); color: #fff; font-size: 16px; margin-bottom: 4px; }
+.scanner-menu .sm-loc { color: #8fb8d6; font-size: 12px; margin-bottom: 14px; }
+.sm-item { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px dashed rgba(255,255,255,.14); }
+.sm-item .sm-name { color: #fff; font-weight: 600; font-size: 14px; }
+.sm-item .sm-ing { color: #9cc0dc; font-size: 12px; margin-top: 2px; }
+.sm-item .sm-price { color: var(--mint); font-family: var(--sans); font-weight: 700; font-size: 14px; white-space: nowrap; }
+.scan-line { position: absolute; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--mint), transparent); box-shadow: 0 0 16px 3px rgba(45,212,191,.7); opacity: 0; top: 0; }
+.scanning .scan-line { opacity: 1; animation: scan 1.6s var(--ease) infinite; }
+@keyframes scan { 0% { top: 4%; } 50% { top: 92%; } 100% { top: 4%; } }
+.scanner-controls { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.scanner-controls .btn { flex: 1; min-width: 150px; }
+.upload-btn { position: relative; overflow: hidden; }
+
+/* ---------------- Results ---------------- */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--navy-2); }
+.legend-item .dot { width: 11px; height: 11px; border-radius: 50%; }
+.legend-item.red .dot { background: var(--red); } .legend-item.yellow .dot { background: var(--yellow); } .legend-item.blue .dot { background: var(--blue); }
+
+.results { display: flex; flex-direction: column; gap: 12px; }
+.result {
+  background: var(--white); border: 1px solid var(--line); border-left: 5px solid var(--line);
+  border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); animation: fade .4s var(--ease);
+}
+.result.red { border-left-color: var(--red); }
+.result.yellow { border-left-color: var(--yellow); }
+.result.blue { border-left-color: var(--blue); }
+.result-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.result-dish { font-family: var(--sans); font-weight: 700; font-size: 17px; color: var(--navy); }
+.result-level { font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+.result.red .result-level { background: var(--red-soft); color: var(--red); }
+.result.yellow .result-level { background: var(--yellow-soft); color: var(--yellow); }
+.result.blue .result-level { background: var(--blue-soft); color: var(--blue); }
+.result-why { font-size: 13.5px; color: var(--muted); margin: 8px 0 12px; line-height: 1.45; }
+.result-q { background: var(--soft-blue); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; color: var(--navy-2); line-height: 1.5; display: flex; gap: 9px; }
+.result-q::before { content: "💬"; }
+.result-q b { color: var(--teal); }
+
+/* ---------------- Emergency phrases ---------------- */
+.emergency-banner { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, var(--red), #b91c3c); color: #fff; border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.emergency-banner .eb-ico { font-size: 38px; }
+.emergency-banner .eb-num { font-family: var(--sans); font-size: 30px; font-weight: 800; }
+.emergency-banner .eb-label { font-size: 13px; opacity: .9; }
+.phrase-list { display: flex; flex-direction: column; gap: 12px; }
+.phrase { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+.phrase .p-local { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--navy); }
+.phrase .p-en { font-size: 13.5px; color: var(--muted); margin-top: 5px; font-style: italic; }
+
+/* ---------------- Knowledge ---------------- */
+.knowledge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.k-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.k-card.active-dest { border: 2px solid var(--teal); box-shadow: 0 12px 28px rgba(14,116,144,.16); }
+.k-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.k-head .k-flag { font-size: 28px; }
+.k-head h3 { font-family: var(--sans); font-size: 18px; color: var(--navy); }
+.k-head .k-here { font-size: 10px; font-weight: 800; color: var(--teal); background: var(--mint-soft); padding: 3px 8px; border-radius: 999px; margin-left: auto; }
+.k-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.k-list li { display: flex; gap: 9px; font-size: 13.5px; color: var(--navy-2); line-height: 1.45; }
+.k-list li::before { content: "⚠️"; font-size: 13px; }
+
+/* ---------------- Bottom nav ---------------- */
+.bottomnav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 1080px; display: flex; justify-content: space-around;
+  background: rgba(255,255,255,.9); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line); padding: 8px 6px 10px; z-index: 40;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 5px 6px; border-radius: 12px; color: var(--muted); transition: color .15s; min-width: 52px; }
+.nav-item .nav-ico { font-size: 20px; }
+.nav-item .nav-label { font-size: 9.5px; font-weight: 700; letter-spacing: .01em; }
+.nav-item.active { color: var(--teal); }
+.nav-item.active .nav-ico { transform: translateY(-1px); }
+.nav-item:hover { color: var(--navy); }
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 860px) {
+  .home-hero { grid-template-columns: 1fr; }
+  .phone-mock { display: none; }
+  .home-title { font-size: 38px; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .dest-grid { grid-template-columns: repeat(3, 1fr); }
+  .knowledge-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .screens { padding: 16px; }
+  .topbar-status { display: none; }
+  .two-col { grid-template-columns: 1fr; }
+  .allergen-grid { grid-template-columns: repeat(2, 1fr); }
+  .profile-summary { grid-template-columns: 1fr; }
+  .dest-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .home-title { font-size: 32px; }
+  .home-trust { gap: 18px; }
+  .nav-item .nav-label { font-size: 8.5px; }
+  .screen-head h2 { font-size: 22px; }
+}
+
+</style>
+</head>
+<body>
+  <!-- ======================= APP SHELL ======================= -->
+  <div class="app-shell">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand" data-nav="home" role="button" tabindex="0" aria-label="AllerBridge home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+            <path d="M16 2c5 4 9 6 12 6 0 9-4 16-12 22C8 24 4 17 4 8c3 0 7-2 12-6Z" fill="url(#g1)"/>
+            <path d="M16 10v11M11 15.5h10" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+            <defs><linearGradient id="g1" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#0e7490"/></linearGradient></defs>
+          </svg>
+        </span>
+        <span class="brand-text">Aller<span>Bridge</span></span>
+      </div>
+      <div class="topbar-status" id="topbarStatus">
+        <span class="status-chip" id="statusDest">🌍 No destination</span>
+        <span class="status-chip" id="statusAllergens">⚠️ 0 allergens</span>
+      </div>
+    </header>
+
+    <!-- Screens container -->
+    <main class="screens" id="screens">
+
+      <!-- ============ 1. HOME ============ -->
+      <section class="screen is-active" id="screen-home" data-screen="home">
+        <div class="home-hero">
+          <div class="home-hero-copy">
+            <span class="eyebrow">Safety-first travel companion</span>
+            <h1 class="home-title">Travel hungry,<br><span class="accent">not worried.</span></h1>
+            <p class="home-sub">
+              A safety-first travel food-allergy communication app that helps you translate allergy
+              needs, spot obvious menu concerns, and ask the right questions abroad.
+            </p>
+            <div class="home-cta">
+              <button class="btn btn-primary" data-nav="profile">Start Safety Workflow →</button>
+              <button class="btn btn-ghost" data-nav="chefcard">Show Chef Card</button>
+            </div>
+            <div class="home-trust">
+              <div><strong>8</strong><span>Destinations</span></div>
+              <div><strong>8</strong><span>Card languages</span></div>
+              <div><strong>9</strong><span>Allergens tracked</span></div>
+            </div>
+          </div>
+
+          <!-- Phone mockup -->
+          <div class="phone-mock" aria-hidden="true">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="mock-card mock-alert">
+                <span class="mock-badge">⚠️ Food Allergy Alert</span>
+                <p class="mock-lang">Alerta de alergia alimentaria</p>
+                <div class="mock-tags"><span>Peanuts</span><span>Sesame</span></div>
+                <p class="mock-note">Please avoid cross-contact from shared oil &amp; utensils.</p>
+              </div>
+              <div class="mock-row mock-yellow">
+                <span class="dot"></span> Possible concern detected — <em>Mole Poblano</em>
+              </div>
+              <div class="mock-row mock-blue">
+                <span class="dot"></span> No obvious match — still verify with staff
+              </div>
+              <div class="mock-chip">🚑 Emergency: 911 · Mexico City</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer" role="note">
+          <strong>Safety notice.</strong> AllerBridge is a communication and decision-support tool.
+          It does not guarantee that food is allergen-free. Always confirm ingredients and cross-contact
+          with restaurant staff and follow medical advice.
+        </div>
+
+        <div class="home-steps">
+          <h2 class="section-h">How the workflow works</h2>
+          <div class="steps-grid" id="homeSteps"></div>
+        </div>
+      </section>
+
+      <!-- ============ 2. ALLERGY PROFILE ============ -->
+      <section class="screen" id="screen-profile" data-screen="profile">
+        <div class="screen-head">
+          <h2>Your allergy profile</h2>
+          <p>Select what you react to. This drives every menu flag, chef card, and question the app generates.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-h">Allergens</h3>
+          <p class="card-sub">Tap the common ones, or search below to add any allergen or ingredient.</p>
+          <div class="allergen-grid" id="allergenGrid"></div>
+          <div class="allergen-search">
+            <input id="allergenInput" type="text" autocomplete="off"
+              placeholder="🔍 Type an allergen or ingredient — e.g. cashew, gluten, shrimp, garlic…" />
+            <div class="suggest" id="allergenSuggest" hidden></div>
+          </div>
+          <div class="custom-tags" id="customTags"></div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h3 class="card-h">Reaction severity</h3>
+            <p class="card-sub">How serious is a reaction for you?</p>
+            <select id="severitySelect" class="select">
+              <option value="severe">Severe / anaphylaxis risk</option>
+              <option value="moderate">Moderate allergy</option>
+              <option value="mild">Mild sensitivity</option>
+            </select>
+          </div>
+          <div class="card">
+            <h3 class="card-h">Cross-contact sensitivity</h3>
+            <p class="card-sub">How careful about shared surfaces &amp; oil?</p>
+            <select id="crossSelect" class="select">
+              <option value="high">High — avoid shared oil / surfaces</option>
+              <option value="medium">Medium — ask staff first</option>
+              <option value="low">Low — ingredient check only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="profile-summary" id="profileSummary"></div>
+
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="home">← Back</button>
+          <button class="btn btn-primary" data-nav="travel">Choose destination →</button>
+        </div>
+      </section>
+
+      <!-- ============ 3. TRAVEL MODE ============ -->
+      <section class="screen" id="screen-travel" data-screen="travel">
+        <div class="screen-head">
+          <h2>Travel mode</h2>
+          <p>Pick where you're eating. The app localizes your language, emergency number, sample menu, and phrases.</p>
+        </div>
+        <div class="dest-grid" id="destGrid"></div>
+
+        <div class="dest-detail card" id="destDetail" hidden></div>
+
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="profile">← Profile</button>
+          <button class="btn btn-primary" data-nav="chefcard">Build chef card →</button>
+        </div>
+      </section>
+
+      <!-- ============ 4. CHEF CARD ============ -->
+      <section class="screen" id="screen-chefcard" data-screen="chefcard">
+        <div class="screen-head">
+          <h2>Chef card <span class="hero-badge">★ Hero feature</span></h2>
+          <p>Show this to restaurant staff. It states your allergies and cross-contact needs in the local language.</p>
+        </div>
+
+        <div class="lang-bar" id="langBar"></div>
+
+        <div class="chefcard" id="chefCard"></div>
+
+        <div class="screen-actions">
+          <button class="btn btn-primary btn-block" id="fullscreenBtn">📲 Present Full-Screen Card</button>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="travel">← Travel</button>
+          <button class="btn btn-primary" data-nav="menu">Open menu helper →</button>
+        </div>
+      </section>
+
+      <!-- ============ 5. MENU HELPER ============ -->
+      <section class="screen" id="screen-menu" data-screen="menu">
+        <div class="screen-head">
+          <h2>Menu helper</h2>
+          <p>This is <strong>not</strong> a "safe food" scanner. It flags obvious concerns and builds questions to ask staff.</p>
+        </div>
+
+        <div class="disclaimer compact">
+          <strong>Reads dish names, not hidden ingredients.</strong> Oils, sauces, broths and cross-contact
+          won't appear on a menu — always confirm with staff.
+        </div>
+
+        <div class="scanner card" id="scanner">
+          <div class="scanner-window" id="scannerWindow">
+            <div class="scan-line" id="scanLine"></div>
+            <img id="menuPhoto" alt="" hidden />
+            <div class="scanner-menu" id="scannerMenu"></div>
+          </div>
+          <div class="scanner-controls">
+            <label class="btn btn-ghost upload-btn">
+              📷 Upload menu photo
+              <input type="file" id="menuUpload" accept="image/*" hidden />
+            </label>
+            <button class="btn btn-primary" id="generateBtn">🔍 Generate Questions</button>
+          </div>
+        </div>
+
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="chefcard">← Chef card</button>
+        </div>
+      </section>
+
+      <!-- ============ 6. ASK STAFF GUIDANCE ============ -->
+      <section class="screen" id="screen-guidance" data-screen="guidance">
+        <div class="screen-head">
+          <h2>Ask staff guidance</h2>
+          <p>Results are grouped by concern level. There is no "green / safe" — every dish needs staff confirmation.</p>
+        </div>
+        <div class="legend">
+          <span class="legend-item red"><span class="dot"></span>Possible concern</span>
+          <span class="legend-item yellow"><span class="dot"></span>Hidden-risk question</span>
+          <span class="legend-item blue"><span class="dot"></span>No obvious match — still verify</span>
+        </div>
+        <div class="results" id="results"></div>
+        <div class="disclaimer compact">
+          <strong>AllerBridge is a communication and decision-support tool.</strong> It does not guarantee that
+          food is allergen-free. Always confirm ingredients and cross-contact with restaurant staff.
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="menu">← Menu helper</button>
+          <button class="btn btn-primary" data-nav="phrases">Emergency phrases →</button>
+        </div>
+      </section>
+
+      <!-- ============ 7. EMERGENCY PHRASES ============ -->
+      <section class="screen" id="screen-phrases" data-screen="phrases">
+        <div class="screen-head">
+          <h2>Emergency phrases</h2>
+          <p>Localized phrases for the moments that matter most.</p>
+        </div>
+        <div class="emergency-banner" id="emergencyBanner"></div>
+        <div class="phrase-list" id="phraseList"></div>
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="guidance">← Guidance</button>
+          <button class="btn btn-primary" data-nav="knowledge">Local food knowledge →</button>
+        </div>
+      </section>
+
+      <!-- ============ 8. HIDDEN-RISK KNOWLEDGE ============ -->
+      <section class="screen" id="screen-knowledge" data-screen="knowledge">
+        <div class="screen-head">
+          <h2>Local food knowledge</h2>
+          <p>Destination-specific hidden-risk notes that help you generate better questions — the knowledge a generic translator can't give you.</p>
+        </div>
+        <div class="knowledge-grid" id="knowledgeGrid"></div>
+        <div class="screen-actions">
+          <button class="btn btn-ghost" data-nav="phrases">← Phrases</button>
+          <button class="btn btn-primary" data-nav="home">Finish</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom nav -->
+    <nav class="bottomnav" id="bottomnav"></nav>
+  </div>
+
+  <!-- Full-screen chef card overlay -->
+  <div class="fullcard-overlay" id="fullcardOverlay" hidden>
+    <div class="fullcard" id="fullCard"></div>
+    <button class="fullcard-close" id="fullcardClose" aria-label="Close">✕ Close</button>
+  </div>
+
+  <script>
+/* ============================================================
+   AllerBridge — app.js
+   Self-contained prototype logic. No backend, no APIs.
+   Safety-first framing: this tool NEVER says food is "safe".
+   ============================================================ */
+
+/* ---------------- DATA: allergens ---------------- */
+const ALLERGENS = [
+  { id: 'peanuts',   label: 'Peanuts',   ico: '🥜' },
+  { id: 'treenuts',  label: 'Tree nuts', ico: '🌰' },
+  { id: 'milk',      label: 'Milk',      ico: '🥛' },
+  { id: 'egg',       label: 'Egg',       ico: '🥚' },
+  { id: 'wheat',     label: 'Wheat',     ico: '🌾' },
+  { id: 'soy',       label: 'Soy',       ico: '🫛' },
+  { id: 'shellfish', label: 'Shellfish', ico: '🦐' },
+  { id: 'sesame',    label: 'Sesame',    ico: '⚪' },
+  { id: 'fish',      label: 'Fish',      ico: '🐟' },
+];
+
+/* Keyword detection with guards to avoid false matches
+   (e.g. "coconut milk" ≠ dairy, "shellfish" ≠ fish). */
+const ALLERGEN_KEYWORDS = {
+  peanuts:   ['peanut', 'satay'],
+  treenuts:  ['cashew', 'almond', 'walnut', 'pine nut', 'pistachio', 'hazelnut', 'tree nut'],
+  milk:      ['milk', 'cream', 'crema', 'cheese', 'paneer', 'butter', 'ghee', 'yogurt', 'mascarpone', 'parmesan'],
+  egg:       ['egg'],
+  wheat:     ['wheat', 'pasta', 'pizza', 'dough', 'bread', 'pita', 'wrap', 'biscuit', 'croissant', 'crust', 'flour', 'churro'],
+  soy:       ['soy', 'soya', 'miso', 'tofu', 'edamame'],
+  shellfish: ['shrimp', 'prawn', 'crab', 'lobster', 'mussel', 'shellfish', 'gambas', 'marisco'],
+  sesame:    ['sesame', 'tahini'],
+  fish:      ['fish', 'salmon', 'tuna', 'anchovy'],
+};
+
+const UNCERTAINTY = ['sauce', 'spice', 'oil', 'broth', 'marinade', 'cream', 'paste', 'dressing', 'stock', 'fried', 'glaze', 'curry', 'gravy', 'dip'];
+
+/* Extended searchable library — users can type to add any of these.
+   Each entry: id, label, ico, cat (shown as a chip), keywords (menu matching). */
+const ALLERGEN_LIBRARY = [
+  // Tree-nut family
+  { id:'almond',    label:'Almond',      ico:'🌰', cat:'Tree nut', keywords:['almond','marzipan','amaretto'] },
+  { id:'cashew',    label:'Cashew',      ico:'🌰', cat:'Tree nut', keywords:['cashew'] },
+  { id:'walnut',    label:'Walnut',      ico:'🌰', cat:'Tree nut', keywords:['walnut'] },
+  { id:'pistachio', label:'Pistachio',   ico:'🌰', cat:'Tree nut', keywords:['pistachio'] },
+  { id:'hazelnut',  label:'Hazelnut',    ico:'🌰', cat:'Tree nut', keywords:['hazelnut','praline','nutella','gianduja'] },
+  { id:'pecan',     label:'Pecan',       ico:'🌰', cat:'Tree nut', keywords:['pecan'] },
+  { id:'macadamia', label:'Macadamia',   ico:'🌰', cat:'Tree nut', keywords:['macadamia'] },
+  { id:'pinenut',   label:'Pine nut',    ico:'🌰', cat:'Tree nut', keywords:['pine nut','pignoli','pesto'] },
+  { id:'brazilnut', label:'Brazil nut',  ico:'🌰', cat:'Tree nut', keywords:['brazil nut'] },
+  { id:'coconut',   label:'Coconut',     ico:'🥥', cat:'Tree nut', keywords:['coconut'] },
+  // Grains / gluten
+  { id:'gluten',    label:'Gluten',      ico:'🌾', cat:'Grain', keywords:['gluten','wheat','barley','rye','flour','bread','pasta','dough','pita','crust','biscuit','croissant','noodle'] },
+  { id:'barley',    label:'Barley',      ico:'🌾', cat:'Grain', keywords:['barley','malt'] },
+  { id:'rye',       label:'Rye',         ico:'🌾', cat:'Grain', keywords:['rye'] },
+  { id:'oats',      label:'Oats',        ico:'🌾', cat:'Grain', keywords:['oat','oatmeal','granola'] },
+  { id:'corn',      label:'Corn',        ico:'🌽', cat:'Grain', keywords:['corn','maize','tortilla','polenta'] },
+  { id:'buckwheat', label:'Buckwheat',   ico:'🌾', cat:'Grain', keywords:['buckwheat','soba'] },
+  // Legumes
+  { id:'chickpea',  label:'Chickpea',    ico:'🫘', cat:'Legume', keywords:['chickpea','hummus','garbanzo','falafel'] },
+  { id:'lentil',    label:'Lentils',     ico:'🫘', cat:'Legume', keywords:['lentil','dal','dhal'] },
+  { id:'pea',       label:'Pea',         ico:'🟢', cat:'Legume', keywords:['green pea','pea protein','snap pea'] },
+  { id:'lupin',     label:'Lupin',       ico:'🌱', cat:'Legume', keywords:['lupin','lupine'] },
+  // Dairy detail
+  { id:'cheese',    label:'Cheese',      ico:'🧀', cat:'Dairy', keywords:['cheese','parmesan','mozzarella','mascarpone','feta','ricotta'] },
+  { id:'butter',    label:'Butter',      ico:'🧈', cat:'Dairy', keywords:['butter','ghee'] },
+  { id:'yogurt',    label:'Yogurt',      ico:'🥛', cat:'Dairy', keywords:['yogurt','yoghurt'] },
+  // Meats
+  { id:'chicken',   label:'Chicken',     ico:'🍗', cat:'Meat', keywords:['chicken','poultry'] },
+  { id:'beef',      label:'Beef',        ico:'🥩', cat:'Meat', keywords:['beef','steak'] },
+  { id:'pork',      label:'Pork',        ico:'🥓', cat:'Meat', keywords:['pork','bacon','ham'] },
+  { id:'lamb',      label:'Lamb',        ico:'🐑', cat:'Meat', keywords:['lamb','mutton'] },
+  { id:'gelatin',   label:'Gelatin',     ico:'🍮', cat:'Additive', keywords:['gelatin','gelatine'] },
+  // Shellfish detail
+  { id:'shrimp',    label:'Shrimp',      ico:'🦐', cat:'Shellfish', keywords:['shrimp','prawn'] },
+  { id:'crab',      label:'Crab',        ico:'🦀', cat:'Shellfish', keywords:['crab'] },
+  { id:'lobster',   label:'Lobster',     ico:'🦞', cat:'Shellfish', keywords:['lobster'] },
+  { id:'mussel',    label:'Mussel',      ico:'🦪', cat:'Shellfish', keywords:['mussel'] },
+  { id:'clam',      label:'Clam',        ico:'🦪', cat:'Shellfish', keywords:['clam'] },
+  { id:'oyster',    label:'Oyster',      ico:'🦪', cat:'Shellfish', keywords:['oyster'] },
+  { id:'scallop',   label:'Scallop',     ico:'🦪', cat:'Shellfish', keywords:['scallop'] },
+  { id:'squid',     label:'Squid',       ico:'🦑', cat:'Shellfish', keywords:['squid','calamari'] },
+  { id:'octopus',   label:'Octopus',     ico:'🐙', cat:'Shellfish', keywords:['octopus'] },
+  // Fish detail
+  { id:'salmon',    label:'Salmon',      ico:'🐟', cat:'Fish', keywords:['salmon'] },
+  { id:'tuna',      label:'Tuna',        ico:'🐟', cat:'Fish', keywords:['tuna'] },
+  { id:'cod',       label:'Cod',         ico:'🐟', cat:'Fish', keywords:['cod'] },
+  { id:'anchovy',   label:'Anchovy',     ico:'🐟', cat:'Fish', keywords:['anchovy','fish sauce'] },
+  // Fruits & veg
+  { id:'kiwi',      label:'Kiwi',        ico:'🥝', cat:'Fruit', keywords:['kiwi'] },
+  { id:'banana',    label:'Banana',      ico:'🍌', cat:'Fruit', keywords:['banana'] },
+  { id:'avocado',   label:'Avocado',     ico:'🥑', cat:'Fruit', keywords:['avocado','guacamole'] },
+  { id:'strawberry',label:'Strawberry',  ico:'🍓', cat:'Fruit', keywords:['strawberry'] },
+  { id:'mango',     label:'Mango',       ico:'🥭', cat:'Fruit', keywords:['mango'] },
+  { id:'citrus',    label:'Citrus',      ico:'🍊', cat:'Fruit', keywords:['citrus','orange','lemon','lime'] },
+  { id:'apple',     label:'Apple',       ico:'🍎', cat:'Fruit', keywords:['apple'] },
+  { id:'peach',     label:'Peach',       ico:'🍑', cat:'Fruit', keywords:['peach'] },
+  { id:'tomato',    label:'Tomato',      ico:'🍅', cat:'Vegetable', keywords:['tomato'] },
+  { id:'garlic',    label:'Garlic',      ico:'🧄', cat:'Vegetable', keywords:['garlic'] },
+  { id:'onion',     label:'Onion',       ico:'🧅', cat:'Vegetable', keywords:['onion','scallion'] },
+  { id:'celery',    label:'Celery',      ico:'🥬', cat:'Vegetable', keywords:['celery'] },
+  { id:'mushroom',  label:'Mushroom',    ico:'🍄', cat:'Vegetable', keywords:['mushroom','funghi'] },
+  { id:'bellpepper',label:'Bell pepper', ico:'🫑', cat:'Vegetable', keywords:['bell pepper','capsicum','paprika'] },
+  // Spices, additives & other
+  { id:'mustard',   label:'Mustard',     ico:'🌭', cat:'Spice', keywords:['mustard'] },
+  { id:'cinnamon',  label:'Cinnamon',    ico:'🟤', cat:'Spice', keywords:['cinnamon'] },
+  { id:'nutmeg',    label:'Nutmeg',      ico:'🟤', cat:'Spice', keywords:['nutmeg'] },
+  { id:'cocoa',     label:'Chocolate / Cocoa', ico:'🍫', cat:'Other', keywords:['chocolate','cocoa','cacao'] },
+  { id:'sulfites',  label:'Sulfites',    ico:'🍷', cat:'Additive', keywords:['sulfite','wine','vinegar'] },
+  { id:'msg',       label:'MSG',         ico:'🧂', cat:'Additive', keywords:['msg','monosodium'] },
+  { id:'yeast',     label:'Yeast',       ico:'🍞', cat:'Other', keywords:['yeast'] },
+  { id:'honey',     label:'Honey',       ico:'🍯', cat:'Other', keywords:['honey'] },
+  { id:'caffeine',  label:'Caffeine',    ico:'☕', cat:'Other', keywords:['coffee','caffeine','espresso'] },
+];
+
+/* Unified lookup: id -> { label, ico, keywords, cat }.
+   Combines the core 9 with the extended library. */
+const ALL_ALLERGENS = {};
+ALLERGENS.forEach(a => { ALL_ALLERGENS[a.id] = { label:a.label, ico:a.ico, keywords: ALLERGEN_KEYWORDS[a.id] || [a.label.toLowerCase()] }; });
+ALLERGEN_LIBRARY.forEach(a => { if (!ALL_ALLERGENS[a.id]) ALL_ALLERGENS[a.id] = { label:a.label, ico:a.ico, keywords:a.keywords, cat:a.cat }; });
+const CORE_IDS = ALLERGENS.map(a => a.id);
+
+/* ---------------- DATA: languages ---------------- */
+const LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Spanish' },
+  { code: 'ja', label: 'Japanese' },
+  { code: 'hi', label: 'Hindi' },
+  { code: 'th', label: 'Thai' },
+  { code: 'it', label: 'Italian' },
+  { code: 'ar', label: 'Arabic' },
+  { code: 'fr', label: 'French' },
+];
+
+const CARD_TEXT = {
+  en: { title: 'Food Allergy Alert',
+        msg: 'I have a severe food allergy. Please do not serve me any dish containing these ingredients. Even a small amount can make me very sick. Please also avoid cross-contact from shared utensils, sauces, surfaces, or cooking oil. Thank you for helping keep me safe.',
+        cross: 'Cross-contact warning: shared oil, fryers, grills, and utensils can transfer allergens even when they are not listed as an ingredient. Please prepare my meal separately.',
+        avoid: 'Please avoid these ingredients', em: 'Local emergency number' },
+  es: { title: 'Alerta de alergia alimentaria',
+        msg: 'Tengo una alergia alimentaria grave. Por favor, no me sirva ningún plato que contenga estos ingredientes. Incluso una pequeña cantidad puede enfermarme gravemente. Evite también el contacto cruzado por utensilios, salsas, superficies o aceite de cocina compartidos. Gracias por ayudarme a estar seguro.',
+        cross: 'Advertencia de contacto cruzado: el aceite, las freidoras, las parrillas y los utensilios compartidos pueden transferir alérgenos aunque no figuren como ingrediente. Por favor, prepare mi comida por separado.',
+        avoid: 'Por favor, evite estos ingredientes', em: 'Número de emergencia local' },
+  ja: { title: '食物アレルギーの警告',
+        msg: '私は重度の食物アレルギーがあります。これらの材料を含む料理は出さないでください。少量でも重い症状が出ることがあります。調理器具・ソース・調理台・油の共用による混入もお避けください。ご協力ありがとうございます。',
+        cross: '混入（クロスコンタクト）の注意：共用の油・フライヤー・グリル・調理器具は、材料に含まれていなくてもアレルゲンが移ることがあります。私の料理は別に調理してください。',
+        avoid: '以下の材料を避けてください', em: '現地の緊急番号' },
+  hi: { title: 'खाद्य एलर्जी चेतावनी',
+        msg: 'मुझे गंभीर खाद्य एलर्जी है। कृपया मुझे इन सामग्रियों वाला कोई व्यंजन न परोसें। थोड़ी सी मात्रा भी मुझे बहुत बीमार कर सकती है। कृपया साझा बर्तन, सॉस, सतह या तेल से होने वाले संपर्क से भी बचें। सुरक्षित रखने में मदद के लिए धन्यवाद।',
+        cross: 'क्रॉस-कॉन्टैक्ट चेतावनी: साझा तेल, फ्रायर, ग्रिल और बर्तन एलर्जन को स्थानांतरित कर सकते हैं भले ही वे सामग्री में सूचीबद्ध न हों। कृपया मेरा भोजन अलग से बनाएं।',
+        avoid: 'कृपया इन सामग्रियों से बचें', em: 'स्थानीय आपातकालीन नंबर' },
+  th: { title: 'คำเตือนการแพ้อาหาร',
+        msg: 'ฉันมีอาการแพ้อาหารอย่างรุนแรง กรุณาอย่าเสิร์ฟอาหารที่มีส่วนผสมเหล่านี้ แม้เพียงเล็กน้อยก็ทำให้ป่วยหนักได้ กรุณาหลีกเลี่ยงการปนเปื้อนจากภาชนะ ซอส พื้นผิว หรือน้ำมันที่ใช้ร่วมกันด้วย ขอบคุณที่ช่วยดูแลความปลอดภัย',
+        cross: 'คำเตือนการปนเปื้อนข้าม: น้ำมัน หม้อทอด เตาย่าง และภาชนะที่ใช้ร่วมกันอาจทำให้สารก่อภูมิแพ้ปนเปื้อนได้ แม้ไม่ใช่ส่วนผสม กรุณาปรุงอาหารของฉันแยกต่างหาก',
+        avoid: 'กรุณาหลีกเลี่ยงส่วนผสมเหล่านี้', em: 'เบอร์ฉุกเฉินในพื้นที่' },
+  it: { title: 'Allerta allergia alimentare',
+        msg: 'Ho una grave allergia alimentare. Per favore non servitemi piatti che contengono questi ingredienti. Anche una piccola quantità può farmi stare molto male. Evitate anche il contatto crociato da utensili, salse, superfici o olio di cottura condivisi. Grazie per aiutarmi a stare al sicuro.',
+        cross: 'Avviso di contatto crociato: olio, friggitrici, griglie e utensili condivisi possono trasferire allergeni anche se non elencati come ingrediente. Per favore preparate il mio pasto separatamente.',
+        avoid: 'Per favore evitate questi ingredienti', em: 'Numero di emergenza locale' },
+  ar: { title: 'تنبيه حساسية غذائية',
+        msg: 'لديّ حساسية غذائية شديدة. من فضلك لا تقدّم لي أي طبق يحتوي على هذه المكونات. حتى الكمية الصغيرة قد تسبب لي مرضاً شديداً. يرجى أيضاً تجنّب التلوث المتبادل من الأدوات أو الصلصات أو الأسطح أو زيت الطهي المشترك. شكراً لمساعدتي على البقاء بأمان.',
+        cross: 'تحذير التلوث المتبادل: الزيت والمقالي والمشاوي والأدوات المشتركة قد تنقل مسببات الحساسية حتى لو لم تكن مدرجة كأحد المكونات. من فضلك حضّر طعامي بشكل منفصل.',
+        avoid: 'من فضلك تجنّب هذه المكونات', em: 'رقم الطوارئ المحلي' },
+  fr: { title: 'Alerte allergie alimentaire',
+        msg: "J'ai une allergie alimentaire grave. Merci de ne me servir aucun plat contenant ces ingrédients. Même une petite quantité peut me rendre très malade. Veuillez aussi éviter tout contact croisé avec les ustensiles, sauces, surfaces ou huiles de cuisson partagés. Merci de m'aider à rester en sécurité.",
+        cross: "Avertissement contact croisé : l'huile, les friteuses, les grills et les ustensiles partagés peuvent transférer des allergènes même s'ils ne sont pas listés comme ingrédient. Merci de préparer mon plat séparément.",
+        avoid: 'Merci d\'éviter ces ingrédients', em: "Numéro d'urgence local" },
+};
+
+/* Allergen names translated for the chef-card tags */
+const ALLERGEN_I18N = {
+  en: { peanuts:'Peanuts', treenuts:'Tree nuts', milk:'Milk', egg:'Egg', wheat:'Wheat', soy:'Soy', shellfish:'Shellfish', sesame:'Sesame', fish:'Fish' },
+  es: { peanuts:'Cacahuetes', treenuts:'Frutos secos', milk:'Leche', egg:'Huevo', wheat:'Trigo', soy:'Soja', shellfish:'Mariscos', sesame:'Sésamo', fish:'Pescado' },
+  ja: { peanuts:'ピーナッツ', treenuts:'木の実', milk:'乳製品', egg:'卵', wheat:'小麦', soy:'大豆', shellfish:'甲殻類', sesame:'ごま', fish:'魚' },
+  hi: { peanuts:'मूंगफली', treenuts:'मेवे', milk:'दूध', egg:'अंडा', wheat:'गेहूं', soy:'सोया', shellfish:'शंख मछली', sesame:'तिल', fish:'मछली' },
+  th: { peanuts:'ถั่วลิสง', treenuts:'ถั่วเปลือกแข็ง', milk:'นม', egg:'ไข่', wheat:'ข้าวสาลี', soy:'ถั่วเหลือง', shellfish:'กุ้ง/หอย', sesame:'งา', fish:'ปลา' },
+  it: { peanuts:'Arachidi', treenuts:'Frutta a guscio', milk:'Latte', egg:'Uovo', wheat:'Grano', soy:'Soia', shellfish:'Crostacei', sesame:'Sesamo', fish:'Pesce' },
+  ar: { peanuts:'الفول السوداني', treenuts:'المكسرات', milk:'الحليب', egg:'البيض', wheat:'القمح', soy:'الصويا', shellfish:'المحار', sesame:'السمسم', fish:'السمك' },
+  fr: { peanuts:'Arachides', treenuts:'Fruits à coque', milk:'Lait', egg:'Œuf', wheat:'Blé', soy:'Soja', shellfish:'Fruits de mer', sesame:'Sésame', fish:'Poisson' },
+};
+
+/* Native translations for the extended allergen library (chef-card tags).
+   Keyed by allergen id -> { lang: name }. English falls back to the label. */
+const ALLERGEN_I18N_EXT = {
+  almond:    { es:'Almendra', ja:'アーモンド', hi:'बादाम', th:'อัลมอนด์', it:'Mandorla', ar:'اللوز', fr:'Amande' },
+  cashew:    { es:'Anacardo', ja:'カシューナッツ', hi:'काजू', th:'เม็ดมะม่วงหิมพานต์', it:'Anacardo', ar:'الكاجو', fr:'Noix de cajou' },
+  walnut:    { es:'Nuez', ja:'クルミ', hi:'अखरोट', th:'วอลนัท', it:'Noce', ar:'الجوز', fr:'Noix' },
+  pistachio: { es:'Pistacho', ja:'ピスタチオ', hi:'पिस्ता', th:'พิสตาชิโอ', it:'Pistacchio', ar:'الفستق', fr:'Pistache' },
+  hazelnut:  { es:'Avellana', ja:'ヘーゼルナッツ', hi:'हेज़लनट', th:'เฮเซลนัท', it:'Nocciola', ar:'البندق', fr:'Noisette' },
+  pecan:     { es:'Pacana', ja:'ペカンナッツ', hi:'पीकन', th:'พีแคน', it:'Noce pecan', ar:'البقان', fr:'Noix de pécan' },
+  macadamia: { es:'Macadamia', ja:'マカダミアナッツ', hi:'मैकाडामिया', th:'มะคาเดเมีย', it:'Macadamia', ar:'المكاديميا', fr:'Macadamia' },
+  pinenut:   { es:'Piñón', ja:'松の実', hi:'चिलगोज़ा', th:'เมล็ดสน', it:'Pinolo', ar:'الصنوبر', fr:'Pignon de pin' },
+  brazilnut: { es:'Nuez de Brasil', ja:'ブラジルナッツ', hi:'ब्राज़ील नट', th:'บราซิลนัท', it:'Noce del Brasile', ar:'جوز البرازيل', fr:'Noix du Brésil' },
+  coconut:   { es:'Coco', ja:'ココナッツ', hi:'नारियल', th:'มะพร้าว', it:'Cocco', ar:'جوز الهند', fr:'Noix de coco' },
+  gluten:    { es:'Gluten', ja:'グルテン', hi:'ग्लूटेन', th:'กลูเตน', it:'Glutine', ar:'الغلوتين', fr:'Gluten' },
+  corn:      { es:'Maíz', ja:'とうもろこし', hi:'मक्का', th:'ข้าวโพด', it:'Mais', ar:'الذرة', fr:'Maïs' },
+  oats:      { es:'Avena', ja:'オート麦', hi:'जई (ओट्स)', th:'ข้าวโอ๊ต', it:'Avena', ar:'الشوفان', fr:'Avoine' },
+  barley:    { es:'Cebada', ja:'大麦', hi:'जौ', th:'ข้าวบาร์เลย์', it:'Orzo', ar:'الشعير', fr:'Orge' },
+  rye:       { es:'Centeno', ja:'ライ麦', hi:'राई', th:'ข้าวไรย์', it:'Segale', ar:'الجاودار', fr:'Seigle' },
+  buckwheat: { es:'Trigo sarraceno', ja:'そば', hi:'कुट्टू', th:'บัควีท', it:'Grano saraceno', ar:'الحنطة السوداء', fr:'Sarrasin' },
+  chickpea:  { es:'Garbanzo', ja:'ひよこ豆', hi:'चना', th:'ถั่วชิกพี', it:'Cece', ar:'الحمص', fr:'Pois chiche' },
+  lentil:    { es:'Lenteja', ja:'レンズ豆', hi:'दाल (मसूर)', th:'ถั่วเลนทิล', it:'Lenticchia', ar:'العدس', fr:'Lentille' },
+  lupin:     { es:'Altramuz', ja:'ルピナス豆', hi:'ल्यूपिन', th:'ลูพิน', it:'Lupino', ar:'الترمس', fr:'Lupin' },
+  pea:       { es:'Guisante', ja:'エンドウ豆', hi:'मटर', th:'ถั่วลันเตา', it:'Pisello', ar:'البازلاء', fr:'Pois' },
+  cheese:    { es:'Queso', ja:'チーズ', hi:'पनीर / चीज़', th:'ชีส', it:'Formaggio', ar:'الجبن', fr:'Fromage' },
+  butter:    { es:'Mantequilla', ja:'バター', hi:'मक्खन', th:'เนย', it:'Burro', ar:'الزبدة', fr:'Beurre' },
+  yogurt:    { es:'Yogur', ja:'ヨーグルト', hi:'दही', th:'โยเกิร์ต', it:'Yogurt', ar:'الزبادي', fr:'Yaourt' },
+  chicken:   { es:'Pollo', ja:'鶏肉', hi:'चिकन (मुर्गी)', th:'ไก่', it:'Pollo', ar:'الدجاج', fr:'Poulet' },
+  beef:      { es:'Carne de res', ja:'牛肉', hi:'गोमांस / बीफ', th:'เนื้อวัว', it:'Manzo', ar:'لحم البقر', fr:'Bœuf' },
+  pork:      { es:'Cerdo', ja:'豚肉', hi:'सूअर का मांस', th:'เนื้อหมู', it:'Maiale', ar:'لحم الخنزير', fr:'Porc' },
+  lamb:      { es:'Cordero', ja:'ラム肉', hi:'भेड़ का मांस', th:'เนื้อแกะ', it:'Agnello', ar:'لحم الضأن', fr:'Agneau' },
+  gelatin:   { es:'Gelatina', ja:'ゼラチン', hi:'जिलेटिन', th:'เจลาติน', it:'Gelatina', ar:'الجيلاتين', fr:'Gélatine' },
+  shrimp:    { es:'Camarón / Gamba', ja:'エビ', hi:'झींगा', th:'กุ้ง', it:'Gambero', ar:'الروبيان', fr:'Crevette' },
+  crab:      { es:'Cangrejo', ja:'カニ', hi:'केकड़ा', th:'ปู', it:'Granchio', ar:'السلطعون', fr:'Crabe' },
+  lobster:   { es:'Langosta', ja:'ロブスター', hi:'लॉबस्टर', th:'ล็อบสเตอร์', it:'Aragosta', ar:'الكركند', fr:'Homard' },
+  mussel:    { es:'Mejillón', ja:'ムール貝', hi:'मस्ल्स / सीप', th:'หอยแมลงภู่', it:'Cozza', ar:'بلح البحر', fr:'Moule' },
+  clam:      { es:'Almeja', ja:'アサリ', hi:'क्लैम / सीप', th:'หอยกาบ', it:'Vongola', ar:'المحار', fr:'Palourde' },
+  oyster:    { es:'Ostra', ja:'牡蠣', hi:'सीप (ऑयस्टर)', th:'หอยนางรม', it:'Ostrica', ar:'المحار (أويستر)', fr:'Huître' },
+  scallop:   { es:'Vieira', ja:'ホタテ', hi:'स्कैलप', th:'หอยเชลล์', it:'Capasanta', ar:'الأسقلوب', fr:'Coquille Saint-Jacques' },
+  squid:     { es:'Calamar', ja:'イカ', hi:'स्क्विड', th:'ปลาหมึก', it:'Calamaro', ar:'الحبار', fr:'Calmar' },
+  octopus:   { es:'Pulpo', ja:'タコ', hi:'ऑक्टोपस', th:'ปลาหมึกยักษ์', it:'Polpo', ar:'الأخطبوط', fr:'Poulpe' },
+  salmon:    { es:'Salmón', ja:'サーモン', hi:'सैल्मन', th:'แซลมอน', it:'Salmone', ar:'السلمون', fr:'Saumon' },
+  tuna:      { es:'Atún', ja:'マグロ', hi:'टूना', th:'ทูน่า', it:'Tonno', ar:'التونة', fr:'Thon' },
+  cod:       { es:'Bacalao', ja:'タラ', hi:'कॉड मछली', th:'ปลาค็อด', it:'Merluzzo', ar:'سمك القد', fr:'Cabillaud' },
+  anchovy:   { es:'Anchoa', ja:'アンチョビ', hi:'एंकोवी', th:'ปลาแอนโชวี่', it:'Acciuga', ar:'الأنشوجة', fr:'Anchois' },
+  garlic:    { es:'Ajo', ja:'にんにく', hi:'लहसुन', th:'กระเทียม', it:'Aglio', ar:'الثوم', fr:'Ail' },
+  onion:     { es:'Cebolla', ja:'玉ねぎ', hi:'प्याज', th:'หัวหอม', it:'Cipolla', ar:'البصل', fr:'Oignon' },
+  tomato:    { es:'Tomate', ja:'トマト', hi:'टमाटर', th:'มะเขือเทศ', it:'Pomodoro', ar:'الطماطم', fr:'Tomate' },
+  celery:    { es:'Apio', ja:'セロリ', hi:'अजवाइन (सेलेरी)', th:'ขึ้นฉ่าย', it:'Sedano', ar:'الكرفس', fr:'Céleri' },
+  mushroom:  { es:'Champiñón / Hongo', ja:'きのこ', hi:'मशरूम', th:'เห็ด', it:'Fungo', ar:'الفطر', fr:'Champignon' },
+  avocado:   { es:'Aguacate', ja:'アボカド', hi:'एवोकाडो', th:'อะโวคาโด', it:'Avocado', ar:'الأفوكادو', fr:'Avocat' },
+  mango:     { es:'Mango', ja:'マンゴー', hi:'आम', th:'มะม่วง', it:'Mango', ar:'المانجو', fr:'Mangue' },
+  citrus:    { es:'Cítricos', ja:'柑橘類', hi:'खट्टे फल', th:'ผลไม้ตระกูลส้ม', it:'Agrumi', ar:'الحمضيات', fr:'Agrumes' },
+  kiwi:      { es:'Kiwi', ja:'キウイ', hi:'कीवी', th:'กีวี', it:'Kiwi', ar:'الكيوي', fr:'Kiwi' },
+  banana:    { es:'Plátano', ja:'バナナ', hi:'केला', th:'กล้วย', it:'Banana', ar:'الموز', fr:'Banane' },
+  strawberry:{ es:'Fresa', ja:'いちご', hi:'स्ट्रॉबेरी', th:'สตรอว์เบอร์รี', it:'Fragola', ar:'الفراولة', fr:'Fraise' },
+  apple:     { es:'Manzana', ja:'りんご', hi:'सेब', th:'แอปเปิ้ล', it:'Mela', ar:'التفاح', fr:'Pomme' },
+  peach:     { es:'Melocotón / Durazno', ja:'桃', hi:'आड़ू', th:'ลูกพีช', it:'Pesca', ar:'الخوخ', fr:'Pêche' },
+  bellpepper:{ es:'Pimiento', ja:'ピーマン', hi:'शिमला मिर्च', th:'พริกหยวก', it:'Peperone', ar:'الفلفل الحلو', fr:'Poivron' },
+  mustard:   { es:'Mostaza', ja:'マスタード', hi:'सरसों / राई', th:'มัสตาร์ด', it:'Senape', ar:'الخردل', fr:'Moutarde' },
+  cinnamon:  { es:'Canela', ja:'シナモン', hi:'दालचीनी', th:'อบเชย', it:'Cannella', ar:'القرفة', fr:'Cannelle' },
+  nutmeg:    { es:'Nuez moscada', ja:'ナツメグ', hi:'जायफल', th:'ลูกจันทน์เทศ', it:'Noce moscata', ar:'جوزة الطيب', fr:'Noix de muscade' },
+  cocoa:     { es:'Chocolate / Cacao', ja:'チョコレート / カカオ', hi:'चॉकलेट / कोको', th:'ช็อกโกแลต / โกโก้', it:'Cioccolato / Cacao', ar:'الشوكولاتة / الكاكاو', fr:'Chocolat / Cacao' },
+  sulfites:  { es:'Sulfitos', ja:'亜硫酸塩', hi:'सल्फाइट', th:'ซัลไฟต์', it:'Solfiti', ar:'الكبريتات', fr:'Sulfites' },
+  msg:       { es:'Glutamato (MSG)', ja:'グルタミン酸ナトリウム (MSG)', hi:'एमएसजी', th:'ผงชูรส (MSG)', it:'Glutammato (MSG)', ar:'الغلوتامات (MSG)', fr:'Glutamate (MSG)' },
+  yeast:     { es:'Levadura', ja:'酵母 (イースト)', hi:'खमीर (यीस्ट)', th:'ยีสต์', it:'Lievito', ar:'الخميرة', fr:'Levure' },
+  honey:     { es:'Miel', ja:'はちみつ', hi:'शहद', th:'น้ำผึ้ง', it:'Miele', ar:'العسل', fr:'Miel' },
+  caffeine:  { es:'Cafeína', ja:'カフェイン', hi:'कैफीन', th:'คาเฟอีน', it:'Caffeina', ar:'الكافيين', fr:'Caféine' },
+};
+
+/* Resolve an allergen's display name in a given language:
+   core translations → extended translations → English label. */
+function allergenName(id, lang) {
+  if (ALLERGEN_I18N[lang] && ALLERGEN_I18N[lang][id]) return ALLERGEN_I18N[lang][id];
+  if (lang !== 'en' && ALLERGEN_I18N_EXT[id] && ALLERGEN_I18N_EXT[id][lang]) return ALLERGEN_I18N_EXT[id][lang];
+  return (ALL_ALLERGENS[id] || {}).label || id;
+}
+
+const PHRASES = {
+  en: ['I have a severe food allergy.', 'Does this dish contain any of my allergens?', 'Was this cooked with shared oil or utensils?', 'Please call emergency services.'],
+  es: ['Tengo una alergia alimentaria grave.', '¿Este plato contiene alguno de mis alérgenos?', '¿Se cocinó con aceite o utensilios compartidos?', 'Por favor, llame a los servicios de emergencia.'],
+  ja: ['私は重度の食物アレルギーがあります。', 'この料理に私のアレルゲンは含まれていますか？', '共用の油や調理器具で調理されましたか？', '救急に電話してください。'],
+  hi: ['मुझे गंभीर खाद्य एलर्जी है।', 'क्या इस व्यंजन में मेरी कोई एलर्जन सामग्री है?', 'क्या इसे साझा तेल या बर्तनों में पकाया गया था?', 'कृपया आपातकालीन सेवाओं को बुलाएं।'],
+  th: ['ฉันแพ้อาหารอย่างรุนแรง', 'เมนูนี้มีสิ่งที่ฉันแพ้ไหม', 'อาหารนี้ปรุงด้วยน้ำมันหรือภาชนะที่ใช้ร่วมกันไหม', 'กรุณาโทรเรียกหน่วยฉุกเฉิน'],
+  it: ['Ho una grave allergia alimentare.', 'Questo piatto contiene qualcuno dei miei allergeni?', 'È stato cucinato con olio o utensili condivisi?', 'Per favore chiami i servizi di emergenza.'],
+  ar: ['لديّ حساسية غذائية شديدة.', 'هل يحتوي هذا الطبق على أيٍّ من مسبّبات حساسيتي؟', 'هل تم طهيه بزيت أو أدوات مشتركة؟', 'من فضلك اتصل بخدمات الطوارئ.'],
+  fr: ["J'ai une allergie alimentaire grave.", "Ce plat contient-il l'un de mes allergènes ?", "A-t-il été cuisiné avec de l'huile ou des ustensiles partagés ?", "Veuillez appeler les services d'urgence."],
+};
+
+/* ---------------- DATA: destinations ---------------- */
+const DESTINATIONS = {
+  mexico:   { name: 'Mexico',   flag: '🇲🇽', city: 'Mexico City', lang: 'Spanish', code: 'es', emergency: '911',
+    menu: [
+      { dish: 'Mole Poblano', ing: ['chicken', 'peanuts', 'sesame', 'chili', 'chocolate', 'spices'] },
+      { dish: 'Tacos de Pescado', ing: ['fish', 'corn tortilla', 'crema', 'cabbage'] },
+      { dish: 'Arroz con Verduras', ing: ['rice', 'vegetables', 'herbs'] },
+      { dish: 'Flan', ing: ['milk', 'egg', 'caramel'] },
+    ],
+    risks: ['Mole may contain peanuts, sesame, nuts, or seeds — always confirm the sauce.', 'Sauces and marinades often need ingredient confirmation.', 'Shared fryers used for tortilla chips can carry cross-contact.'] },
+
+  japan:    { name: 'Japan',    flag: '🇯🇵', city: 'Tokyo', lang: 'Japanese', code: 'ja', emergency: '119',
+    menu: [
+      { dish: 'Miso Ramen', ing: ['wheat noodles', 'soy', 'sesame oil', 'pork broth'] },
+      { dish: 'Salmon Rice Bowl', ing: ['salmon', 'rice', 'scallions'] },
+      { dish: 'Chicken Satay', ing: ['chicken', 'peanut sauce'] },
+      { dish: 'Matcha Ice Cream', ing: ['milk', 'cream', 'matcha'] },
+    ],
+    risks: ['Broths, soy sauce, and sesame oil are common hidden ingredients.', 'Shared tempura fryers create cross-contact risk.', 'Dashi stock is often fish-based even in vegetable dishes.'] },
+
+  india:    { name: 'India',    flag: '🇮🇳', city: 'New Delhi', lang: 'Hindi', code: 'hi', emergency: '112',
+    menu: [
+      { dish: 'Butter Chicken', ing: ['chicken', 'milk', 'cream', 'cashew', 'spices'] },
+      { dish: 'Chole Rice', ing: ['chickpeas', 'rice', 'spices'] },
+      { dish: 'Paneer Tikka', ing: ['paneer', 'yogurt', 'spices'] },
+      { dish: 'Kheer', ing: ['milk', 'rice', 'tree nuts', 'cardamom'] },
+    ],
+    risks: ['Cashew and dairy (ghee, cream, paneer) appear in many curries.', 'Ghee (clarified butter) is used widely, even in "vegetable" dishes.', 'Shared tandoor and cooking surfaces can cause cross-contact.'] },
+
+  thailand: { name: 'Thailand', flag: '🇹🇭', city: 'Bangkok', lang: 'Thai', code: 'th', emergency: '1669',
+    menu: [
+      { dish: 'Pad Thai', ing: ['rice noodles', 'egg', 'peanuts', 'shrimp', 'fish sauce'] },
+      { dish: 'Green Curry', ing: ['chicken', 'coconut milk', 'fish sauce', 'shrimp paste'] },
+      { dish: 'Mango Sticky Rice', ing: ['sticky rice', 'coconut milk', 'mango'] },
+      { dish: 'Tom Yum Soup', ing: ['shrimp', 'lemongrass', 'fish sauce', 'chili'] },
+    ],
+    risks: ['Peanuts, fish sauce, shrimp paste, and egg are used constantly.', 'Shared woks make cross-contact very common.', 'Curry pastes frequently contain shrimp or fish.'] },
+
+  italy:    { name: 'Italy',    flag: '🇮🇹', city: 'Rome', lang: 'Italian', code: 'it', emergency: '112',
+    menu: [
+      { dish: 'Pesto Pasta', ing: ['wheat pasta', 'pine nuts', 'cheese', 'basil', 'garlic'] },
+      { dish: 'Margherita Pizza', ing: ['wheat dough', 'cheese', 'tomato', 'basil'] },
+      { dish: 'Risotto ai Funghi', ing: ['rice', 'mushrooms', 'butter', 'parmesan'] },
+      { dish: 'Tiramisu', ing: ['egg', 'cream', 'mascarpone', 'wheat biscuit', 'coffee'] },
+    ],
+    risks: ['Pesto contains pine nuts and cheese.', 'Pasta, pizza, and bread almost always involve wheat.', 'Parmesan and butter add dairy to many "simple" dishes.'] },
+
+  uae:      { name: 'UAE',      flag: '🇦🇪', city: 'Dubai', lang: 'Arabic', code: 'ar', emergency: '998',
+    menu: [
+      { dish: 'Hummus & Pita', ing: ['chickpeas', 'tahini', 'wheat pita', 'olive oil'] },
+      { dish: 'Chicken Shawarma', ing: ['chicken', 'garlic sauce', 'wheat wrap'] },
+      { dish: 'Lamb Machboos', ing: ['lamb', 'rice', 'spices'] },
+      { dish: 'Umm Ali', ing: ['milk', 'cream', 'tree nuts', 'pastry'] },
+    ],
+    risks: ['Tahini (sesame) is in hummus and many dips.', 'Nuts and dairy are common in desserts like Umm Ali.', 'Shared grills for meats can cause cross-contact.'] },
+
+  france:   { name: 'France',   flag: '🇫🇷', city: 'Paris', lang: 'French', code: 'fr', emergency: '112',
+    menu: [
+      { dish: 'Croissant', ing: ['wheat', 'butter', 'egg wash'] },
+      { dish: 'Quiche Lorraine', ing: ['egg', 'cream', 'milk', 'wheat crust', 'bacon'] },
+      { dish: 'Salade Niçoise', ing: ['tuna', 'egg', 'olives', 'vegetables'] },
+      { dish: 'Crème Brûlée', ing: ['cream', 'egg', 'milk', 'sugar'] },
+    ],
+    risks: ['Butter, cream, egg, wheat, and nuts appear across pastries and sauces.', '"Vegan"-looking pastries may still have egg-washed surfaces.', 'Sauces are often finished with butter or cream.'] },
+
+  spain:    { name: 'Spain',    flag: '🇪🇸', city: 'Barcelona', lang: 'Spanish', code: 'es', emergency: '112',
+    menu: [
+      { dish: 'Paella de Marisco', ing: ['rice', 'shrimp', 'mussels', 'fish', 'saffron'] },
+      { dish: 'Tortilla Española', ing: ['egg', 'potato', 'onion'] },
+      { dish: 'Gambas al Ajillo', ing: ['shrimp', 'garlic', 'olive oil'] },
+      { dish: 'Churros con Chocolate', ing: ['wheat', 'egg', 'milk chocolate'] },
+    ],
+    risks: ['Shellfish, egg, and wheat are common; shared frying oil adds risk.', 'Seafood stock can appear in rice dishes even without visible shellfish.', 'Churros are often fried in shared oil with other batters.'] },
+};
+
+const RTL = new Set(['ar']);
+
+/* ---------------- STATE ---------------- */
+const DEFAULT_STATE = { allergens: ['peanuts', 'sesame'], severity: 'severe', cross: 'high', destination: 'mexico', cardLang: 'es', lastResults: null };
+let state = load();
+
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem('allerbridge'));
+    if (s && Array.isArray(s.allergens)) return Object.assign({}, DEFAULT_STATE, s);
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+function save() { try { localStorage.setItem('allerbridge', JSON.stringify(state)); } catch (e) {} }
+
+/* ---------------- HELPERS ---------------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const allergenLabel = (id) => (ALL_ALLERGENS[id] || {}).label || id;
+const listNames = (ids) => ids.map(allergenLabel).join(', ');
+
+function matchAllergen(text, id) {
+  let t = ' ' + text + ' ';
+  if (id === 'milk') t = t.replace(/coconut milk/g, 'coconut');       // coconut milk is not dairy
+  if (id === 'fish') t = t.replace(/shellfish/g, 'shell');            // shellfish is not fish
+  const kw = (ALL_ALLERGENS[id] && ALL_ALLERGENS[id].keywords) || [];
+  return kw.some(k => t.includes(k));
+}
+
+/* ---------------- NAV ---------------- */
+const NAV = [
+  { screen: 'home',      ico: '🏠', label: 'Home' },
+  { screen: 'profile',   ico: '⚕️', label: 'Profile' },
+  { screen: 'travel',    ico: '🌍', label: 'Travel' },
+  { screen: 'chefcard',  ico: '🪪', label: 'Card' },
+  { screen: 'menu',      ico: '📋', label: 'Menu' },
+  { screen: 'guidance',  ico: '💬', label: 'Guide' },
+  { screen: 'phrases',   ico: '🚑', label: 'SOS' },
+  { screen: 'knowledge', ico: '📚', label: 'Info' },
+];
+
+function buildNav() {
+  $('#bottomnav').innerHTML = NAV.map(n =>
+    `<div class="nav-item" data-nav="${n.screen}"><span class="nav-ico">${n.ico}</span><span class="nav-label">${n.label}</span></div>`
+  ).join('');
+}
+
+function go(screen) {
+  $$('.screen').forEach(s => s.classList.toggle('is-active', s.dataset.screen === screen));
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === screen));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (screen === 'chefcard') renderChefCard();
+  if (screen === 'travel') renderDestDetail();
+  if (screen === 'phrases') renderPhrases();
+  if (screen === 'knowledge') renderKnowledge();
+  if (screen === 'menu') renderScannerMenu();
+  if (screen === 'guidance') renderResults();
+}
+
+/* Event delegation for anything with data-nav */
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-nav]');
+  if (t) { go(t.dataset.nav); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { const t = e.target.closest('[data-nav]'); if (t) go(t.dataset.nav); }
+});
+
+/* ---------------- STATUS CHIPS ---------------- */
+function renderStatus() {
+  const d = DESTINATIONS[state.destination];
+  $('#statusDest').textContent = d ? `${d.flag} ${d.city}` : '🌍 No destination';
+  const n = state.allergens.length;
+  $('#statusAllergens').textContent = `⚠️ ${n} allergen${n === 1 ? '' : 's'}`;
+}
+
+/* ---------------- HOME STEPS ---------------- */
+function renderHomeSteps() {
+  const steps = [
+    { n: 'STEP 1', ico: '🧾', h: 'Build your profile', p: 'Allergens + severity + cross-contact sensitivity.' },
+    { n: 'STEP 2', ico: '🌍', h: 'Set your destination', p: 'Localizes language, menu, phrases & emergency number.' },
+    { n: 'STEP 3', ico: '🪪', h: 'Generate chef card', p: 'A translated card you show restaurant staff.' },
+    { n: 'STEP 4', ico: '📋', h: 'Ask the right questions', p: 'Menu helper flags concerns & drafts staff questions.' },
+  ];
+  $('#homeSteps').innerHTML = steps.map((s, i) =>
+    `<div class="step-card" data-nav="${['profile','travel','chefcard','menu'][i]}">
+       <div class="step-ico">${s.ico}</div>
+       <div class="step-num">${s.n}</div>
+       <h4>${s.h}</h4><p>${s.p}</p>
+     </div>`).join('');
+}
+
+/* ---------------- ALLERGEN PROFILE ---------------- */
+function renderAllergens() {
+  $('#allergenGrid').innerHTML = ALLERGENS.map(a => {
+    const sel = state.allergens.includes(a.id);
+    return `<div class="allergen ${sel ? 'selected' : ''}" data-allergen="${a.id}">
+      <span class="a-ico">${a.ico}</span>${a.label}<span class="check">✓</span></div>`;
+  }).join('');
+  $$('#allergenGrid .allergen').forEach(el => el.addEventListener('click', () => {
+    const id = el.dataset.allergen;
+    const i = state.allergens.indexOf(id);
+    if (i >= 0) state.allergens.splice(i, 1); else state.allergens.push(id);
+    save(); refreshProfile();
+  }));
+}
+
+function renderProfileSummary() {
+  const sevMap = { severe: 'Severe / anaphylaxis', moderate: 'Moderate allergy', mild: 'Mild sensitivity' };
+  const crossMap = { high: 'High — avoid shared oil', medium: 'Medium — ask first', low: 'Low — ingredient check' };
+  $('#profileSummary').innerHTML = `
+    <div class="summary-tile"><span>Allergens</span><strong>${state.allergens.length ? listNames(state.allergens) : 'None selected'}</strong></div>
+    <div class="summary-tile"><span>Severity</span><strong>${sevMap[state.severity]}</strong></div>
+    <div class="summary-tile"><span>Cross-contact</span><strong>${crossMap[state.cross]}</strong></div>`;
+}
+
+/* ---------------- CUSTOM / SEARCHED ALLERGENS ---------------- */
+function refreshProfile() {
+  state.lastResults = null;
+  renderAllergens();
+  renderCustomTags();
+  renderProfileSummary();
+  renderStatus();
+}
+
+function renderCustomTags() {
+  const custom = state.allergens.filter(id => !CORE_IDS.includes(id));
+  const box = $('#customTags');
+  if (!custom.length) { box.innerHTML = ''; return; }
+  box.innerHTML = custom.map(id => {
+    const a = ALL_ALLERGENS[id] || { label: id, ico: '⚠️' };
+    return `<span class="custom-tag">${a.ico || '⚠️'} ${a.label}
+      <button data-remove="${id}" aria-label="Remove ${a.label}">✕</button></span>`;
+  }).join('');
+  $$('#customTags [data-remove]').forEach(b => b.addEventListener('click', () => {
+    const idx = state.allergens.indexOf(b.dataset.remove);
+    if (idx >= 0) state.allergens.splice(idx, 1);
+    save(); refreshProfile();
+  }));
+}
+
+let suggestActive = -1;
+function searchLibrary(q) {
+  q = q.trim().toLowerCase();
+  if (!q) return [];
+  const sel = new Set(state.allergens);
+  return Object.keys(ALL_ALLERGENS)
+    .map(id => Object.assign({ id }, ALL_ALLERGENS[id]))
+    .filter(a => !sel.has(a.id) &&
+      (a.label.toLowerCase().includes(q) || (a.keywords || []).some(k => k.includes(q))))
+    .sort((a, b) => {
+      const as = a.label.toLowerCase().startsWith(q) ? 0 : 1;
+      const bs = b.label.toLowerCase().startsWith(q) ? 0 : 1;
+      return as - bs || a.label.localeCompare(b.label);
+    })
+    .slice(0, 8);
+}
+
+function renderSuggest() {
+  const input = $('#allergenInput');
+  const box = $('#allergenSuggest');
+  suggestActive = -1;
+  if (!input.value.trim()) { box.hidden = true; box.innerHTML = ''; return; }
+  const items = searchLibrary(input.value);
+  box.hidden = false;
+  if (!items.length) { box.innerHTML = '<div class="suggest-empty">No match — try another word</div>'; return; }
+  box.innerHTML = items.map(a =>
+    `<div class="suggest-item" data-add="${a.id}">
+       <span class="s-ico">${a.ico || '⚠️'}</span>${a.label}
+       ${a.cat ? `<span class="s-cat">${a.cat}</span>` : ''}</div>`).join('');
+  $$('#allergenSuggest [data-add]').forEach(el => el.addEventListener('mousedown', (e) => {
+    e.preventDefault(); addAllergen(el.dataset.add);
+  }));
+}
+
+function addAllergen(id) {
+  if (!state.allergens.includes(id)) state.allergens.push(id);
+  const input = $('#allergenInput');
+  input.value = ''; $('#allergenSuggest').hidden = true;
+  save(); refreshProfile(); input.focus();
+}
+
+/* ---------------- DESTINATIONS ---------------- */
+function renderDestGrid() {
+  $('#destGrid').innerHTML = Object.entries(DESTINATIONS).map(([k, d]) =>
+    `<div class="dest ${state.destination === k ? 'selected' : ''}" data-dest="${k}">
+       <div class="flag">${d.flag}</div><div class="d-name">${d.name}</div><div class="d-city">${d.city}</div></div>`
+  ).join('');
+  $$('#destGrid .dest').forEach(el => el.addEventListener('click', () => {
+    state.destination = el.dataset.dest;
+    state.cardLang = DESTINATIONS[state.destination].code;
+    state.lastResults = null;
+    save(); renderDestGrid(); renderDestDetail(); renderStatus();
+  }));
+}
+
+function renderDestDetail() {
+  const d = DESTINATIONS[state.destination];
+  const box = $('#destDetail');
+  if (!d) { box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = `
+    <h3 class="card-h">${d.flag} ${d.name} — ${d.city}</h3>
+    <div class="detail-grid">
+      <div class="detail-tile"><span>Local language</span><strong>${d.lang}</strong></div>
+      <div class="detail-tile"><span>Emergency number</span><strong>🚑 ${d.emergency}</strong></div>
+      <div class="detail-tile"><span>Chef card language</span><strong>${(LANGUAGES.find(l=>l.code===d.code)||{}).label}</strong></div>
+    </div>
+    <p class="card-sub" style="margin-top:14px">Sample menu loaded: ${d.menu.map(m => m.dish).join(' · ')}</p>`;
+}
+
+/* ---------------- CHEF CARD ---------------- */
+function renderLangBar() {
+  $('#langBar').innerHTML = LANGUAGES.map(l =>
+    `<button class="lang-btn ${state.cardLang === l.code ? 'active' : ''}" data-lang="${l.code}">${l.label}</button>`
+  ).join('');
+  $$('#langBar .lang-btn').forEach(b => b.addEventListener('click', () => {
+    state.cardLang = b.dataset.lang; save(); renderLangBar(); renderChefCard();
+  }));
+}
+
+function chefCardHTML(large) {
+  const d = DESTINATIONS[state.destination];
+  const lang = state.cardLang;
+  const tx = CARD_TEXT[lang];
+  const rtl = RTL.has(lang) ? ' dir="rtl" style="text-align:right"' : '';
+  if (!state.allergens.length) {
+    return `<div class="cc-empty">No allergens selected yet.<br>Go to <b>Profile</b> to add your allergens and your chef card will appear here.</div>`;
+  }
+  const tags = state.allergens.map(id =>
+    `<span class="cc-tag">⛔ ${allergenName(id, lang)}</span>`).join('');
+  return `
+    <div class="cc-head">
+      <span class="cc-ico">⚠️</span>
+      <div><h3>${tx.title}</h3><p>AllerBridge · ${d ? d.city : ''}</p></div>
+    </div>
+    <div class="cc-body">
+      <p class="cc-msg"${rtl}>${tx.msg}</p>
+      <p class="cc-sub-en">${CARD_TEXT.en.msg}</p>
+      <div class="cc-section-label">${tx.avoid}</div>
+      <div class="cc-tags">${tags}</div>
+      <div class="cc-cross">⚠️ ${tx.cross}</div>
+      ${d ? `<div class="cc-emergency"><span>${tx.em}</span><strong>${d.emergency}</strong></div>` : ''}
+    </div>`;
+}
+
+function renderChefCard() { renderLangBar(); $('#chefCard').innerHTML = chefCardHTML(false); }
+
+/* ---------------- MENU HELPER + SCANNER ---------------- */
+function renderScannerMenu() {
+  const d = DESTINATIONS[state.destination];
+  const photo = $('#menuPhoto');
+  photo.hidden = true;
+  $('#scannerMenu').hidden = false;
+  $('#scannerMenu').innerHTML = `
+    <h4>${d.name} — Sample Menu</h4>
+    <div class="sm-loc">${d.flag} ${d.city} · tap “Generate Questions” to analyze</div>
+    ${d.menu.map((m, i) => `
+      <div class="sm-item">
+        <div><div class="sm-name">${m.dish}</div><div class="sm-ing">${m.ing.join(', ')}</div></div>
+        <div class="sm-price">$${(6 + i * 2)}</div>
+      </div>`).join('')}`;
+}
+
+function analyzeMenu() {
+  const d = DESTINATIONS[state.destination];
+  const sel = state.allergens;
+  return d.menu.map(item => {
+    const text = (item.dish + ' ' + item.ing.join(' ')).toLowerCase();
+    const matched = sel.filter(id => matchAllergen(text, id));
+    const uncertainty = UNCERTAINTY.filter(w => text.includes(w));
+
+    if (matched.length) {
+      return { dish: item.dish, level: 'red', label: 'Possible concern',
+        why: `Lists ${listNames(matched)} — a direct match with your allergy profile.`,
+        q: `Can you confirm whether ${item.dish} contains ${listNames(matched)}? I have a serious allergy and must avoid it completely, including cross-contact from shared oil or utensils.` };
+    }
+    if (uncertainty.length && sel.length) {
+      const w = uncertainty[0];
+      return { dish: item.dish, level: 'yellow', label: 'Hidden-risk question',
+        why: `The dish name doesn't list your allergens, but "${w}" often hides them (oils, sauces, pastes, broths).`,
+        q: `Is there any ${listNames(sel)} in the ${w} used for ${item.dish}? And was it prepared with shared oil, utensils, or surfaces?` };
+    }
+    return { dish: item.dish, level: 'blue', label: 'No obvious match — still verify',
+      why: `No obvious allergen in the dish name — but menus don't show hidden ingredients or cross-contact.`,
+      q: sel.length
+        ? `Can you check with the kitchen whether ${item.dish} contains ${listNames(sel)}, or was prepared near it?`
+        : `Add your allergens in Profile so AllerBridge can tailor this question for ${item.dish}.` };
+  });
+}
+
+function runScan() {
+  if (!state.allergens.length) {
+    alert('Add your allergens in the Profile screen first — the menu helper tailors every question to your allergy profile.');
+    go('profile'); return;
+  }
+  const scanner = $('#scanner');
+  scanner.classList.add('scanning');
+  const btn = $('#generateBtn');
+  btn.disabled = true; btn.textContent = '🔍 Scanning…';
+  setTimeout(() => {
+    scanner.classList.remove('scanning');
+    btn.disabled = false; btn.textContent = '🔍 Generate Questions';
+    state.lastResults = analyzeMenu();
+    save();
+    go('guidance');
+  }, 1900);
+}
+
+/* ---------------- RESULTS / GUIDANCE ---------------- */
+function renderResults() {
+  const results = state.lastResults || analyzeMenu();
+  const order = { red: 0, yellow: 1, blue: 2 };
+  const sorted = [...results].sort((a, b) => order[a.level] - order[b.level]);
+  $('#results').innerHTML = sorted.map(r => `
+    <div class="result ${r.level}">
+      <div class="result-top">
+        <span class="result-dish">${r.dish}</span>
+        <span class="result-level">${r.label}</span>
+      </div>
+      <p class="result-why">${r.why}</p>
+      <div class="result-q"><span><b>Ask staff:</b> ${r.q}</span></div>
+    </div>`).join('');
+}
+
+/* ---------------- PHRASES ---------------- */
+function renderPhrases() {
+  const d = DESTINATIONS[state.destination];
+  const lang = d.code;
+  const rtl = RTL.has(lang) ? ' dir="rtl" style="text-align:right"' : '';
+  $('#emergencyBanner').innerHTML = `
+    <span class="eb-ico">🚑</span>
+    <div><div class="eb-label">Emergency number · ${d.flag} ${d.city}</div><div class="eb-num">${d.emergency}</div></div>`;
+  $('#phraseList').innerHTML = PHRASES[lang].map((p, i) => `
+    <div class="phrase">
+      <div class="p-local"${rtl}>${p}</div>
+      <div class="p-en">${PHRASES.en[i]}</div>
+    </div>`).join('');
+}
+
+/* ---------------- KNOWLEDGE ---------------- */
+function renderKnowledge() {
+  $('#knowledgeGrid').innerHTML = Object.entries(DESTINATIONS).map(([k, d]) => `
+    <div class="k-card ${state.destination === k ? 'active-dest' : ''}">
+      <div class="k-head"><span class="k-flag">${d.flag}</span><h3>${d.name}</h3>
+        ${state.destination === k ? '<span class="k-here">Your destination</span>' : ''}</div>
+      <ul class="k-list">${d.risks.map(r => `<li>${r}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+/* ---------------- FULL-SCREEN CARD ---------------- */
+function openFullCard() {
+  $('#fullCard').innerHTML = chefCardHTML(true);
+  $('#fullcardOverlay').hidden = false;
+}
+function closeFullCard() { $('#fullcardOverlay').hidden = true; }
+
+/* ---------------- INIT ---------------- */
+function init() {
+  buildNav();
+  renderStatus();
+  renderHomeSteps();
+  renderAllergens();
+  renderCustomTags();
+  renderProfileSummary();
+  renderDestGrid();
+  renderDestDetail();
+
+  const ai = $('#allergenInput');
+  ai.addEventListener('input', renderSuggest);
+  ai.addEventListener('focus', renderSuggest);
+  ai.addEventListener('keydown', (e) => {
+    const items = $$('#allergenSuggest [data-add]');
+    if (e.key === 'ArrowDown') { e.preventDefault(); suggestActive = Math.min(suggestActive + 1, items.length - 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); suggestActive = Math.max(suggestActive - 1, 0); }
+    else if (e.key === 'Enter') { e.preventDefault(); const t = items[suggestActive >= 0 ? suggestActive : 0]; if (t) addAllergen(t.dataset.add); return; }
+    else if (e.key === 'Escape') { $('#allergenSuggest').hidden = true; return; }
+    else return;
+    items.forEach((el, i) => el.classList.toggle('active', i === suggestActive));
+  });
+  ai.addEventListener('blur', () => setTimeout(() => { $('#allergenSuggest').hidden = true; }, 150));
+
+  $('#severitySelect').value = state.severity;
+  $('#crossSelect').value = state.cross;
+  $('#severitySelect').addEventListener('change', e => { state.severity = e.target.value; save(); renderProfileSummary(); });
+  $('#crossSelect').addEventListener('change', e => { state.cross = e.target.value; save(); renderProfileSummary(); });
+
+  $('#generateBtn').addEventListener('click', runScan);
+  $('#menuUpload').addEventListener('change', e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = $('#menuPhoto');
+      img.src = ev.target.result; img.hidden = false;
+      $('#scannerMenu').hidden = true;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $('#fullscreenBtn').addEventListener('click', openFullCard);
+  $('#fullcardClose').addEventListener('click', closeFullCard);
+  $('#fullcardOverlay').addEventListener('click', e => { if (e.target.id === 'fullcardOverlay') closeFullCard(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullCard(); });
+
+  go('home');
+}
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
